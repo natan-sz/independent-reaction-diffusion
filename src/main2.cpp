@@ -1,11 +1,13 @@
 #include <iostream>
 #include <unistd.h>
+#include <vector>
+#include <iomanip>
 
 /*
  * Title: Reaction Diffusion Simulation
  * Author: Natan Szczepaniak
  * Description: Simulation of the "Turing Pattern" using the
- * Gray-Scott Model
+ * Grey-Scott Model
  *
  * Version: 0.0
  */
@@ -33,9 +35,8 @@ const float cen = -1;
 const float adj = 0.2;
 const float cor = 0.005;
 
-// This is potentially the most inefficient way of doing this but should work for now
-// In the future this will be replace with FFT
-void conv2D(double **M) {
+// Convolution function
+std::vector<std::vector<double> > conv2D(std::vector<std::vector<double>>& M) {
 
 	// Initialise kernel used for convolution
 	double kernel[KSIZE][KSIZE] = {	
@@ -44,11 +45,7 @@ void conv2D(double **M) {
 		{cor,adj,cor},
 	};
 
-	// Initialise temporary matrix 
-	double** L = new double*[HEIGHT];
-	for (int i = 0; i < WIDTH; ++i) {
-		L[i] = new double[WIDTH];
-	}
+	std::vector<std::vector<double> > L (WIDTH, std::vector<double> (HEIGHT,0));
 
 	// Extremely inefficient 2d convolution
 	for (int i=1; i < WIDTH-KCENTER; ++i) {
@@ -62,39 +59,15 @@ void conv2D(double **M) {
 			L[i][j] = sum;
 		}
 	}
-
-	for (int i = 0; i < HEIGHT; ++i) {
-		for (int j = 0; j < WIDTH; ++j) {
-			M[i][j] = L[i][j];
-		}
-	} 
+	return L;
 }
 
-//// This function will update the values of A and B for each cell
-//// (PSEUDO CODE CHANGE)
-//void updateFunc () {
-//
-//	// Find the difference after one iteration
-//	diff_A = (DA * conv2D(A, -1, kernel)) - (A * B**2) + (feed * (1 - A))    
-//	diff_B = (DB * conv2D(B, -1, kernel)) + (A * B**2) - ((k + feed) * B)    
-//
-//	// Add the difference to previous
-//	A += diff_A    
-//	B += diff_B 
-//}
 
 // Function including the Gray-Scott equations
-void update (double **A, double **B) {
-
-	// Initialise 2 2D Arrays of pointers
-	double** C = new double*[HEIGHT];
-	double** D = new double*[HEIGHT];
-
-	// Populate the previous array with arrays (leading to 2D array) 
-	for (int i = 0; i < WIDTH; ++i) {
-		C[i] = new double[WIDTH];
-		D[i] = new double[WIDTH];
-	}
+void update (std::vector<std::vector<double>>& A, std::vector<std::vector<double>>& B) {
+	
+	std::vector<std::vector<double>> C;
+	std::vector<std::vector<double>> D;
 
 	C = conv2D(A);
 	D = conv2D(B);
@@ -102,9 +75,11 @@ void update (double **A, double **B) {
 	//Iteration through all of the values of the array to update each one
 	for (int i = 0; i < HEIGHT; ++i) {
 		for (int j = 0; j < WIDTH; ++j) {
-			double diff_A = (DIFFUSION_A ) - (A[i][j] * B[i][j] * B[i][j] + (FEED * 1 - A[i][j]));
-			double diff_B = (DIFFUSION_B ) + (A[i][j] * B[i][j] * B[i][j] + ((KILL + FEED) * B[i][j]));
+			double diff_A = (DIFFUSION_A * conv2D(A)[i][j] - (A[i][j] * B[i][j] * B[i][j] + (FEED * 1 - A[i][j])));
+			double diff_B = (DIFFUSION_B * conv2D(B)[i][j] + (A[i][j] * B[i][j] * B[i][j] + ((KILL + FEED) * B[i][j])));
 
+			A[i][j] += diff_A;
+			B[i][j] += diff_B;
 		}
 	} 
 
@@ -112,38 +87,30 @@ void update (double **A, double **B) {
 
 int main () {
 
-	// Initialise 2 2D Arrays of pointers
-	double** A = new double*[HEIGHT];
-	double** B = new double*[HEIGHT];
+	// Assign two 2D arrays
+	std::vector<std::vector<double> > array_A (WIDTH, std::vector<double> (HEIGHT,0));
+	std::vector<std::vector<double> > array_B (WIDTH, std::vector<double> (HEIGHT,0));
 
-	// Populate the previous array with arrays (leading to 2D array) 
-	for (int i = 0; i < WIDTH; ++i) {
-		A[i] = new double[WIDTH];
-		B[i] = new double[WIDTH];
-	}
-
-
-	// Temporary Initial position
+	// Set the values
 	for (int i = 0; i < HEIGHT; ++i) {
 		for (int j = 0; j < WIDTH; ++j) {
 			if (i >= WIDTH/4 && i <= (WIDTH*3)/4 && j >= HEIGHT/4 && j <= (HEIGHT*3)/4) {
-				A[i][j] = 1;
+				array_A[i][j] = 1;
 			}
 		}
 	} 
-
 	
 	//Main Simulation loop
 	for (int i = 0; i <= iterations ; ++i){
 		std::cout << "Iteration " << i << ":" << std::endl;
 		for (int i = 0; i < HEIGHT; ++i) {
 			for (int j = 0; j < WIDTH; ++j) {
-			    std::cout << A[i][j];
+			    std::cout << std::fixed << std::setprecision(1) << array_A[i][j];
 			}
 			std::cout << std::endl;
 		} 
 
-		update(A,B);
+		update(array_A,array_B);
 
 		usleep(1000000);
 		system("clear");

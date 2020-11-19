@@ -1,1 +1,1 @@
-g++ ./src/main.cpp -o run
+g++ ./src/main2.cpp -o run
