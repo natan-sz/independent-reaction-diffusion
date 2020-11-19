@@ -19,3 +19,10 @@ I am initially designing this code to work on Linux however when implementing th
 # IDE
 
 For this project I am mainly using VIM as my primary text editor with the g++ compiler. As the project expands I may move to visual studio code due to easier linking of c++ files. 
+
+
+# Animation So Far
+
+This is a gif of the current code working. Given an initial starting point of a block of values 1 in a 20x20 matrix the convolution function is applied to the matrix. Animation was slowed down to a 1 second gap in between iterations as it was too fast to see what was happening. 
+
+![Alt Text](https://i.imgur.com/JDApozr.gif)
