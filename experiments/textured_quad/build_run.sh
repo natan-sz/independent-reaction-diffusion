@@ -1,2 +1,2 @@
-g++ main.cpp -lGL -lGLEW -lglfw -o run
+g++ main.cpp -lGL -lGLEW -lGLU -lglfw -o run
 ./run
