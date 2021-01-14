@@ -7,11 +7,13 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 640
 
+// Show OpenGL errors and description
 static void error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error: %s\n", description);
 }
 
+// Sets break on key press
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -45,29 +47,27 @@ int main( void )
 	if (glewInit() != GLEW_OK){
 		std::cout << "GLEW ERROR" << std::endl;
 	}
-    float vertices[8] =
+    float vertex[8] =
     {
         0.25f, 0.75f, // top right corner
         0.25f, 0.75f, // top left corner
         0.25f, 0.25f, // bottom left corner
-        0.75f, 0.25f // bottom right corner
+        0.75f, 0.25f  // bottom right corner
     };
 
-	/*
 	// Setting up the Window and projection
     glViewport( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT ); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
     glMatrixMode( GL_PROJECTION ); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
     glLoadIdentity( ); // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
-    glOrtho( 0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, 0, 1 ); // essentially set coordinate system
+    glOrtho( 0, 1, 0, 1, 0, 1 ); // essentially set coordinate system
     glMatrixMode( GL_MODELVIEW ); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
 
     glLoadIdentity( ); // same as above comment
-	*/
 
 	unsigned int buffer;
 	glGenBuffers(1,&buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), vertex, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE, sizeof(float) * 2, 0);
@@ -90,17 +90,23 @@ int main( void )
     // Loop until the user closes the window
 	*/
 
+	float vertices[] = 
+	{
+		-0.5, 0.5, 0.0,
+		 0.5, 0.5, 0.0,
+		 0.5,-0.5, 0.0,
+		-0.5,-0.5, 0.0,
+	};
+
     while ( !glfwWindowShouldClose( window ) )
     {
         glClear( GL_COLOR_BUFFER_BIT );
         // Render OpenGL here
-		glBegin(GL_POLYGON);
-		glVertex3f(2.0, 4.0, 0.0);
-		glVertex3f(8.0, 4.0, 0.0);
-		glVertex3f(8.0, 6.0, 0.0);
-		glVertex3f(2.0, 6.0, 0.0);
-		glEnd();
-		glFlush();
+		glEnableClientState( GL_VERTEX_ARRAY );
+		glVertexPointer( 3, GL_FLOAT, 0, vertices);
+		glDrawArrays(GL_QUADS, 0, 4);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
         // Swap front and back buffers
         glfwSwapBuffers( window );
         

@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <vector>
 #include <iomanip>
-saa
+
 /*
  * Title: Reaction Diffusion Simulation
  * Author: Natan Szczepaniak
@@ -12,7 +12,7 @@ saa
  * Version: 0.0
  */
 
-const int iterations = 1000;
+const int iterations = 100;
 
 // Set matrix parameters
 const int WIDTH = 20;
@@ -105,16 +105,17 @@ int main () {
 		std::cout << "Iteration " << i << ":" << std::endl;
 		for (int i = 0; i < HEIGHT; ++i) {
 			for (int j = 0; j < WIDTH; ++j) {
-			    std::cout << std::fixed << std::setprecision(1) << array_A[i][j];
+			    //std::cout << std::fixed << std::setprecision(1) << array_A[i][j];
 			}
-			std::cout << std::endl;
+			//std::cout << std::endl;
 		} 
 
 		update(array_A,array_B);
 
-		usleep(1000000);
+		//usleep(1000000);
 		system("clear");
 	}
+	std::cout << "Done" << std::endl;
 
 	return 0;
 }

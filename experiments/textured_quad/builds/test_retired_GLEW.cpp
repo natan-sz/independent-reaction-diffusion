@@ -27,8 +27,7 @@ int main () {
 
 
 
-	///*		START OF VERTEX SHADER			*///
-
+	///*		START OF VERTEX SHADER			*/// 
 	// Shader source code in GLSL
 	// This creates a 3D vector, at location 0 and puts this in a vec4 which is stored
 	// as gl_Position
@@ -92,7 +91,6 @@ int main () {
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if(!success) {
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		...
 	}
 
 	///*		END OF SHADER PROGRAM LINKING	*/// 
