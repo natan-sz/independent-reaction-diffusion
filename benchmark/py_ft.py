@@ -13,7 +13,7 @@
 # DB - Diffusion rate of chemical B
 # feed - rate at which the chemical is fed into the system
 # kill - rate at which chemical "dies" off
-#
+
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,7 +22,7 @@ import matplotlib.animation as animation
 import cv2
 
 # Set Constants
-N = 20
+N = 1000
 DA = 1.0
 DB = 0.5
 feed = 0.034
@@ -36,8 +36,8 @@ B = np.zeros((N, N))
 N2 = N // 2
 r = int(N / 10.0)
 
-A[N2 - r:N2 + r, N2 - r:N2 + r] = 0.50
-B[N2 - r:N2 + r, N2 - r:N2 + r] = 0.25
+A[N2 - r:N2 + r, N2 - r:N2 + r] = 1
+#B[N2 - r:N2 + r, N2 - r:N2 + r] = 0
 
 # Create a scanning kernel
 cen = -1
@@ -79,16 +79,16 @@ def update(A, B, DA, DB, feed, k, N, kernel):
 
 # Uncomment to enable non-preview mode (faster)
 # No live preview (only last frame)
-iter = 100
+iter = 10
 
 for i in range(iter):
     update(A, B, DA, DB, feed, k, N, kernel)
     print(str(float(float(i) * 100.0 // iter)) + "%", end="\r", flush=True)
 
 print("Done!")
-# plt.imshow(A)
-#plt.savefig("reaction.png", dpi=300)
-# plt.show()
+#plt.imshow(A)
+##plt.savefig("reaction.png", dpi=300)
+#plt.show()
 
 # TO DO:
 #   - Add documentation

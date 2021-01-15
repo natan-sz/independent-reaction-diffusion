@@ -6,7 +6,7 @@ import matplotlib.cm as cm
 import matplotlib.animation as animation
 
 # Set Constants
-N = 20
+N = 1000
 DA = 1.0
 DB = 0.5
 feed = 0.055
@@ -67,13 +67,13 @@ def update(A, B, DA, DB, feed, k, N, kernel, offset):
     B += diff_B
 
 
-def animate(i):
-    update(A, B, DA, DB, feed, k, N, kernel, offset)
-    im.set_array(A)
-    return [im]
+#def animate(i):
+#    update(A, B, DA, DB, feed, k, N, kernel, offset)
+#    im.set_array(A)
+#    return [im]
 
 
-iter = 100
+iter = 10
 
 for i in range(iter):
     update(A, B, DA, DB, feed, k, N, kernel, offset)

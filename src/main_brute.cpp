@@ -7,16 +7,16 @@
  * Title: Reaction Diffusion Simulation
  * Author: Natan Szczepaniak
  * Description: Simulation of the "Turing Pattern" using the
- * Grey-Scott Model
+ * Gray-Scott Model
  *
  * Version: 0.0
  */
 
-const int iterations = 100;
+const int ITERATIONS = 10;
 
 // Set matrix parameters
-const int WIDTH = 20;
-const int HEIGHT = 20;
+const int WIDTH = 1000;
+const int HEIGHT = 1000;
 
 // Set Kernel size
 const int KSIZE = 3;
@@ -35,17 +35,15 @@ const float cen = -1;
 const float adj = 0.2;
 const float cor = 0.005;
 
+// Initialise kernel used for convolution
+std::vector<std::vector<double> > kernel = {	
+	{cor,adj,cor},
+	{adj,cen,adj},
+	{cor,adj,cor},
+};
+
 // Convolution function
-std::vector<std::vector<double> > conv2D(std::vector<std::vector<double>>& M) {
-
-	// Initialise kernel used for convolution
-	double kernel[KSIZE][KSIZE] = {	
-		{cor,adj,cor},
-		{adj,cen,adj},
-		{cor,adj,cor},
-	};
-
-	std::vector<std::vector<double> > L (WIDTH, std::vector<double> (HEIGHT,0));
+void conv2D(std::vector<std::vector<double>>& M, std::vector<std::vector<double>>& conv_M) {
 
 	// Extremely inefficient 2d convolution
 	for (int i=1; i < WIDTH-KCENTER; ++i) {
@@ -56,27 +54,24 @@ std::vector<std::vector<double> > conv2D(std::vector<std::vector<double>>& M) {
 					sum += kernel[k][l] * M[i - KCENTER + k][j - KCENTER + l];
 				}
 			}
-			L[i][j] = sum;
+			conv_M[i][j] = sum;
 		}
 	}
-	return L;
 }
 
 
 // Function including the Gray-Scott equations
-void update (std::vector<std::vector<double>>& A, std::vector<std::vector<double>>& B) {
-	
-	std::vector<std::vector<double>> C;
-	std::vector<std::vector<double>> D;
+void update (std::vector<std::vector<double>>& A, std::vector<std::vector<double>>& B,std::vector<std::vector<double>>& conv_A, std::vector<std::vector<double>>& conv_B) {
 
-	C = conv2D(A);
-	D = conv2D(B);
+	//Use convolution function on each of the matrices and obtain
+	conv2D(A,conv_A);
+	conv2D(B,conv_B);
 
 	//Iteration through all of the values of the array to update each one
 	for (int i = 0; i < HEIGHT; ++i) {
 		for (int j = 0; j < WIDTH; ++j) {
-			double diff_A = (DIFFUSION_A * conv2D(A)[i][j] - (A[i][j] * B[i][j] * B[i][j] + (FEED * 1 - A[i][j])));
-			double diff_B = (DIFFUSION_B * conv2D(B)[i][j] + (A[i][j] * B[i][j] * B[i][j] + ((KILL + FEED) * B[i][j])));
+			double diff_A = (DIFFUSION_A * conv_A[i][j] - (A[i][j] * B[i][j] * B[i][j] + (FEED * 1 - A[i][j])));
+			double diff_B = (DIFFUSION_B * conv_B[i][j] + (A[i][j] * B[i][j] * B[i][j] + ((KILL + FEED) * B[i][j])));
 
 			A[i][j] += diff_A;
 			B[i][j] += diff_B;
@@ -91,6 +86,9 @@ int main () {
 	std::vector<std::vector<double> > array_A (WIDTH, std::vector<double> (HEIGHT,0));
 	std::vector<std::vector<double> > array_B (WIDTH, std::vector<double> (HEIGHT,0));
 
+	std::vector<std::vector<double> > conv_A (WIDTH, std::vector<double> (HEIGHT,0));
+	std::vector<std::vector<double> > conv_B (WIDTH, std::vector<double> (HEIGHT,0));
+
 	// Set the values
 	for (int i = 0; i < HEIGHT; ++i) {
 		for (int j = 0; j < WIDTH; ++j) {
@@ -101,21 +99,23 @@ int main () {
 	} 
 	
 	//Main Simulation loop
-	for (int i = 0; i <= iterations ; ++i){
+	for (int i = 0; i <= ITERATIONS ; ++i){
 		std::cout << "Iteration " << i << ":" << std::endl;
 		for (int i = 0; i < HEIGHT; ++i) {
 			for (int j = 0; j < WIDTH; ++j) {
-			    //std::cout << std::fixed << std::setprecision(1) << array_A[i][j];
+			    //std::cout << std::fixed << std::setprecision(1) << array_A[i][j] << ", ";
 			}
 			//std::cout << std::endl;
 		} 
 
-		update(array_A,array_B);
+		update(array_A,array_B,conv_A,conv_B);
 
 		//usleep(1000000);
 		system("clear");
 	}
 	std::cout << "Done" << std::endl;
+	
+	
 
 	return 0;
 }
