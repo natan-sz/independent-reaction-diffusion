@@ -22,7 +22,7 @@ import matplotlib.animation as animation
 import cv2
 
 # Set Constants
-N = 1000
+N = 200
 DA = 1.0
 DB = 0.5
 feed = 0.034
@@ -36,8 +36,8 @@ B = np.zeros((N, N))
 N2 = N // 2
 r = int(N / 10.0)
 
-A[N2 - r:N2 + r, N2 - r:N2 + r] = 1
-#B[N2 - r:N2 + r, N2 - r:N2 + r] = 0
+A[N2 - r:N2 + r, N2 - r:N2 + r] = 0.5
+B[N2 - r:N2 + r, N2 - r:N2 + r] = 0.25
 
 # Create a scanning kernel
 cen = -1
@@ -59,33 +59,34 @@ def update(A, B, DA, DB, feed, k, N, kernel):
 
 
 # Live Preview (Errors at larger simulations)
-#fig, axes = plt.subplots()
-#im = plt.imshow(B, animated=True, vmin=0, vmax=1)
-# plt.set_cmap("rainbow")
-# plt.axis("off")
-#fig.subplots_adjust(0, 0, 1, 1)
-# fig.tight_layout(pad=0)
+fig, axes = plt.subplots()
+im = plt.imshow(B, animated=True, vmin=0, vmax=1)
+plt.set_cmap("rainbow")
+plt.axis("off")
+fig.subplots_adjust(0, 0, 1, 1)
+fig.tight_layout(pad=0)
 
 # Function iterates and animates the matrix evolution
-# def animate(i):
-#    for n in range(40):
-#        update(A, B, DA, DB, feed, k, N, kernel)
-#    im.set_array(A)
-#    return [im]
-#
-#
-#ani = animation.FuncAnimation(fig, animate, blit=True, interval=250)
-# plt.show()
+def animate(i):
+    for n in range(100):
+        update(A, B, DA, DB, feed, k, N, kernel)
+        im.set_array(A)
+        print(A)
+    return [im]
+
+
+ani = animation.FuncAnimation(fig, animate, blit=True, interval=250)
+plt.show()
 
 # Uncomment to enable non-preview mode (faster)
 # No live preview (only last frame)
-iter = 10
-
-for i in range(iter):
-    update(A, B, DA, DB, feed, k, N, kernel)
-    print(str(float(float(i) * 100.0 // iter)) + "%", end="\r", flush=True)
-
-print("Done!")
+#iter = 10
+#
+#for i in range(iter):
+#    update(A, B, DA, DB, feed, k, N, kernel)
+#    print(str(float(float(i) * 100.0 // iter)) + "%", end="\r", flush=True)
+#
+#print("Done!")
 #plt.imshow(A)
 ##plt.savefig("reaction.png", dpi=300)
 #plt.show()
