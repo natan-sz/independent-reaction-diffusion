@@ -15,11 +15,11 @@
  * Version: 2.0
  */
 
-const int iterations = 10;
+const int iterations = 100000;
 
 // Set matrix parameters
-const int WIDTH = 1000;
-const int HEIGHT = 1000;
+const int WIDTH = 500;
+const int HEIGHT = 500;
 
 // Set Kernel size
 const int KSIZE = 3;
@@ -45,7 +45,7 @@ cv::Mat kernel=(cv::Mat_<float>(3,3)<<
 	cor,adj,cor);
 
 //cv::Mat f_kernel;
-cv::Point anchor(kernel.cols - kernel.cols/3 - 1, kernel.rows - kernel.rows/3 - 1);
+//cv::Point anchor(kernel.cols - kernel.cols/3 - 1, kernel.rows - kernel.rows/3 - 1);
 
 // Flip code to flip the kernel by -1 on both axis and by 1 on the y axis.
 //int flip_code = -1;
@@ -69,9 +69,9 @@ void update (cv::Mat& A, cv::Mat& B,cv::Mat& conv_A, cv::Mat& conv_B) {
 	//	}
 	//} 
 	//
-
-	A += (DIFFUSION_A * conv_A) - (A*(B*B)) + (FEED * (cv::Mat::ones(HEIGHT, WIDTH, CV_64F) - A));
-	B += (DIFFUSION_B * conv_B) + (A*(B*B)) - ((KILL + FEED) * B);
+	
+	A = A + (DIFFUSION_A * conv_A) - ((A * B) * B) + (FEED * (1.0 - A));
+	B = B + (DIFFUSION_B * conv_B) + ((A * B) * B) - ((KILL + FEED) * B);
 }
 
 int main () {
@@ -85,21 +85,6 @@ int main () {
 	cv::Mat conv_B(WIDTH,HEIGHT,CV_64F);
 
 	cv::Mat norm(WIDTH,HEIGHT,CV_64F);
-
-
-	//Init array_A with ones
-	for (int i = 0; i < HEIGHT; ++i) {
-		for (int j = 0; j < WIDTH; ++j) {
-			array_A.at<double>(i, j) = 1.0;
-		}
-	}
-
-	//Init array_B with ones
-	for (int i = 0; i < HEIGHT; ++i) {
-		for (int j = 0; j < WIDTH; ++j) {
-			array_B.at<double>(i, j) = 0.0;
-		}
-	}
 
 	//// Set the values
 	for (int i = 0; i < HEIGHT; ++i) {
@@ -133,8 +118,8 @@ int main () {
 
 		//cv::normalize(array_A,norm,1,0,cv::NORM_MINMAX,-1, cv::noArray());
 
-		//cv::imshow("kernel",array_A);
-		//cv::waitKey(100);
+		cv::imshow("kernel",array_A);
+		cv::waitKey(100);
 
 		//usleep(1000000);
 		//system("clear");

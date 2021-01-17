@@ -15,6 +15,8 @@
 # kill - rate at which chemical "dies" off
 
 
+import os
+import time
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -22,22 +24,11 @@ import matplotlib.animation as animation
 import cv2
 
 # Set Constants
-N = int(sys.argv[1])
 DA = 1.0
 DB = 0.5
 feed = 0.034
 k = 0.060
 
-# Initialise Chemicals A & B
-A = np.ones((N, N))
-B = np.zeros((N, N))
-
-# Set initial matrix (Add Square to the middle)
-N2 = N // 2
-r = int(N / 10.0)
-
-A[N2 - r:N2 + r, N2 - r:N2 + r] = 0.5
-B[N2 - r:N2 + r, N2 - r:N2 + r] = 0.25
 
 # Create a scanning kernel
 cen = -1
@@ -57,41 +48,44 @@ def update(A, B, DA, DB, feed, k, N, kernel):
 
     return A, B
 
+# Parameters for testing purposes
+n_average = 5
 
-# Live Preview (Errors at larger simulations)
-fig, axes = plt.subplots()
-im = plt.imshow(B, animated=True, vmin=0, vmax=1)
-plt.set_cmap("rainbow")
-plt.axis("off")
-fig.subplots_adjust(0, 0, 1, 1)
-fig.tight_layout(pad=0)
+# arrays to hold the size of array and the average time for the corresponding array
+sequence = range(1,1000)
+avg_times = []
 
-# Function iterates and animates the matrix evolution
-def animate(i):
-    for n in range(100):
+for N in sequence:
+
+    # Initialise Chemicals A & B
+    A = np.ones((N, N))
+    B = np.zeros((N, N))
+
+    # Set initial matrix (Add Square to the middle)
+    N2 = N // 2
+    r = int(N / 10.0)
+
+    A[N2 - r:N2 + r, N2 - r:N2 + r] = 0.5
+    B[N2 - r:N2 + r, N2 - r:N2 + r] = 0.25
+
+    total_time = 0
+
+    #Function to run the function n_average times and take an average
+    print(N)
+    for i in range(n_average):
+        start = time.time()
         update(A, B, DA, DB, feed, k, N, kernel)
-        im.set_array(A)
-    return [im]
+        end = time.time()
 
+        total_time += (end-start)
 
-ani = animation.FuncAnimation(fig, animate, blit=True, interval=250)
+    avg_times.append((total_time/float(n_average)))
+
+x = list(sequence)
+y = avg_times
+
+plt.plot(x,y,"r.")
+plt.title("Average run-time of function against array size (Python|FFT)",fontweight="bold")
+plt.xlabel("Size of input array N",fontweight="bold")
+plt.ylabel("Average run time T (s)",fontweight="bold")
 plt.show()
-
-# Uncomment to enable non-preview mode (faster)
-# No live preview (only last frame)
-#iter = 10
-#
-#for i in range(iter):
-#    update(A, B, DA, DB, feed, k, N, kernel)
-#    print(str(float(float(i) * 100.0 // iter)) + "%", end="\r", flush=True)
-#
-#print("Done!")
-#plt.imshow(A)
-##plt.savefig("reaction.png", dpi=300)
-#plt.show()
-
-# TO DO:
-#   - Add documentation
-#   - Create a CLI interface (Setting parameters)
-#   - Check for more FFT methods
-#   - Rewrite in C

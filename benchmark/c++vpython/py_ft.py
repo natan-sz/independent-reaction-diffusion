@@ -22,7 +22,7 @@ import matplotlib.animation as animation
 import cv2
 
 # Set Constants
-N = int(sys.argv[1])
+N = 200
 DA = 1.0
 DB = 0.5
 feed = 0.034
@@ -71,6 +71,7 @@ def animate(i):
     for n in range(100):
         update(A, B, DA, DB, feed, k, N, kernel)
         im.set_array(A)
+        print(A)
     return [im]
 
 
