@@ -73,7 +73,7 @@ int main( void )
 	glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE, sizeof(float) * 2, 0);
 
 	// Texture related
-	/*
+	
 	// GLuint texture;
 	// Creates OpenGL texture object
 	glGenTextures(1, &texture);
@@ -88,7 +88,7 @@ int main( void )
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_FLOAT, 1, 1, 0, GL_FLOAT, GL_UNSIGNED_BYTE, nullptr);   
     // Loop until the user closes the window
-	*/
+
 
 	float vertices[] = 
 	{
