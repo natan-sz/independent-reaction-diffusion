@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <vector>
 #include <iomanip>
-#include <cstdlib>
 
 /*
  * Title: Reaction Diffusion Simulation
@@ -13,8 +12,11 @@
  * Version: 0.0
  */
 
-const int ITERATIONS = 1;
+const int ITERATIONS = 10;
 
+// Set matrix parameters
+const int WIDTH = 1000;
+const int HEIGHT = 1000;
 
 // Set Kernel size
 const int KSIZE = 3;
@@ -41,7 +43,7 @@ std::vector<std::vector<double> > kernel = {
 };
 
 // Convolution function
-void conv2D(std::vector<std::vector<double>>& M, std::vector<std::vector<double>>& conv_M,int WIDTH, int HEIGHT) {
+void conv2D(std::vector<std::vector<double>>& M, std::vector<std::vector<double>>& conv_M) {
 
 	// Extremely inefficient 2d convolution
 	for (int i=1; i < WIDTH-KCENTER; ++i) {
@@ -59,11 +61,11 @@ void conv2D(std::vector<std::vector<double>>& M, std::vector<std::vector<double>
 
 
 // Function including the Gray-Scott equations
-void update (std::vector<std::vector<double>>& A, std::vector<std::vector<double>>& B,std::vector<std::vector<double>>& conv_A, std::vector<std::vector<double>>& conv_B,int WIDTH,int HEIGHT) {
+void update (std::vector<std::vector<double>>& A, std::vector<std::vector<double>>& B,std::vector<std::vector<double>>& conv_A, std::vector<std::vector<double>>& conv_B) {
 
 	//Use convolution function on each of the matrices and obtain
-	conv2D(A,conv_A,WIDTH,HEIGHT);
-	conv2D(B,conv_B,WIDTH,HEIGHT);
+	conv2D(A,conv_A);
+	conv2D(B,conv_B);
 
 	//Iteration through all of the values of the array to update each one
 	for (int i = 0; i < HEIGHT; ++i) {
@@ -78,11 +80,7 @@ void update (std::vector<std::vector<double>>& A, std::vector<std::vector<double
 
 }
 
-int main (int argc, char *argv[]) {
-
-	// Set matrix parameters
-	int WIDTH = atoi(argv[1]);
-	int HEIGHT = atoi(argv[1]);
+int main () {
 
 	// Assign two 2D arrays
 	std::vector<std::vector<double> > array_A (WIDTH, std::vector<double> (HEIGHT,0));
@@ -110,17 +108,13 @@ int main (int argc, char *argv[]) {
 			//std::cout << std::endl;
 		} 
 
-		update(array_A,array_B,conv_A,conv_B,WIDTH,HEIGHT);
+		update(array_A,array_B,conv_A,conv_B);
 
 		//usleep(1000000);
-		//system("clear");
+		system("clear");
 	}
 	std::cout << "Done" << std::endl;
-
-	array_A.shrink_to_fit();
-	array_B.shrink_to_fit();
-	conv_A.shrink_to_fit();
-	conv_B.shrink_to_fit();
+	
 	
 
 	return 0;

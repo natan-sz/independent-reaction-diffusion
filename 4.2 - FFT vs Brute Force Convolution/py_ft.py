@@ -84,8 +84,22 @@ for N in sequence:
 x = list(sequence)
 y = avg_times
 
-plt.plot(x,y,"r.")
-plt.title("Average run-time of function against array size (Python|FFT)",fontweight="bold")
+coeffs = np.polyfit(x,y,2)
+a = coeffs[0]
+b = coeffs[1]
+c = coeffs[2]
+
+x2 = np.arange(min(x)-1, max(x)+1, .01)
+y2 = np.polyval(coeffs, x2)
+
+eq = "y= " + str("{:.2e}".format(a)) + "$x^2$ + " + str("{:.2e}".format(b)) + "$x$ + " + str("{:.2e}".format(c))
+print(eq)
+
+
+plt.plot(x,y,"k.")
+#plt.plot(x2,y2,"r-")
+#plt.text(0,2.25,eq,fontsize=8)
+plt.title("Average run-time of Python|FFT (OpenCV)",fontweight="bold")
 plt.xlabel("Size of input array N",fontweight="bold")
 plt.ylabel("Average run time T (s)",fontweight="bold")
 plt.show()

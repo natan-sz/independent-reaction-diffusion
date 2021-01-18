@@ -4,10 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Parameters for testing purposes
-n_average = 5
+n_average = 10
 
 # arrays to hold the size of array and the average time for the corresponding array
-sequence = range(1,200)
+sequence = range(1,1000)
 avg_times = []
 
 for N in sequence:
@@ -16,7 +16,7 @@ for N in sequence:
     print(N)
     for i in range(n_average):
         start = time.time()
-        os.system("./py_no_ft.py " + str(N)) # Command to test
+        os.system("./run_fft2 " + str(N)) # Command to test
         end = time.time()
 
         total_time += (end-start)
@@ -37,13 +37,11 @@ x2 = np.arange(min(x)-1, max(x)+1, .01)
 y2 = np.polyval(coeffs, x2)
 
 eq = "y= " + str("{:.2e}".format(a)) + "$x^4$ + " + str("{:.2e}".format(b)) + "$x^3$ + " + str("{:.2e}".format(c)) + "$x^2$ + " + str("{:.2e}".format(d)) + "$x$ + " + str("{:.2e}".format(e))
-print(eq)
-
 
 plt.plot(x,y,"k.")
-plt.plot(x2,y2,"r-")
-plt.text(0,2.25,eq,fontsize=8)
-plt.title("Average run-time of Python|Brute Force Implementation",fontweight="bold")
+#plt.plot(x2,y2,"r-")
+plt.text(0,0.1,eq,fontsize=8)
+plt.title("Average run-time of C++|FFT (OpenCV)",fontweight="bold")
 plt.xlabel("Size of input array N",fontweight="bold")
 plt.ylabel("Average run time T (s)",fontweight="bold")
 plt.show()

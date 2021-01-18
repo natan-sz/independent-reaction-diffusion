@@ -7,7 +7,7 @@ import matplotlib.animation as animation
 import sys
 
 # Set Constants
-N = sys.argv[1]
+N = int(sys.argv[1])
 DA = 1.0
 DB = 0.5
 feed = 0.055

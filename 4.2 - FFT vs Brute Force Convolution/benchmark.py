@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Parameters for testing purposes
-total_time = 0
 n_average = 5
 
 # arrays to hold the size of array and the average time for the corresponding array
@@ -13,6 +12,7 @@ avg_times = []
 
 for N in sequence:
     #Function to run the function n_average times and take an average
+    total_time = 0
     print(N)
     for i in range(n_average):
         start = time.time()
